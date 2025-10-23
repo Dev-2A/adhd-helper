@@ -4,6 +4,14 @@
 from sqlmodel import SQLModel, create_engine, Session
 from app.config import settings
 
+from app.models import (
+    User,
+    EmotionRecord,
+    FocusSession,
+    TodoItem,
+    AIFeedback,
+)
+
 # 데이터베이스 엔진 생성
 engine = create_engine(
     settings.DATABASE_URL,
