@@ -1,3 +1,4 @@
+import json
 from datetime import datetime
 from typing import TYPE_CHECKING, List, Optional
 
@@ -32,7 +33,20 @@ class User(UserBase, BaseModel, table=True):
     emotion_records: List["EmotionRecord"] = Relationship(back_populates="user")
     focus_sessions: List["FocusSession"] = Relationship(back_populates="user")
     todo_items: List["TodoItem"] = Relationship(back_populates="user")
-    ai_feedbacks: List["AIFeedback"] = Relationship(back_populates="user")
+    ai_feedbacks: List["AIFeedback"] = Relationship(back_populates="ai_feedbacks")
+
+    def get_settings(self) -> dict:
+        """설정을 딕셔너리로 반환"""
+        try:
+            return json.loads(self.settings) if self.settings else {}
+        except:
+            return {}
+
+    def update_settings(self, new_settings: dict):
+        """설정 업데이트"""
+        current = self.get_settings()
+        current.update(new_settings)
+        self.settings = json.dumps(current)
 
 
 class UserCreate(UserBase):
@@ -54,3 +68,11 @@ class UserUpdate(SQLModel):
     name: Optional[str] = None
     timezone: Optional[str] = None
     password: Optional[str] = Field(default=None, min_length=8)
+
+
+class UserSettings(SQLModel):
+    """사용자 설정 스키마"""
+
+    openai_api_key: Optional[str] = None
+    enable_ai_analysis: bool = True
+    ai_feedback_frequency: str = "daily"  # daily, weekly, never

@@ -252,20 +252,20 @@ adhd-helper/
     - [x] Protected Routes
   - [x] 대시보드 기본 구조
 
-### 🚧 진행 중인 작업
-
-- [ ] **Phase 4: 핵심 기능 UI**
+- [x] **Phase 4: 핵심 기능 UI**
   - [x] 감정 기록 컴포넌트
   - [x] 포모도로 타이머 컴포넌트
   - [x] Todo 리스트 컴포넌트
   - [x] 데이터 시각화 (차트)
 
-### 📋 예정된 작업
+### 🚧 진행 중인 작업
 
-- [ ] **Phase 5: AI 통합**
-  - [ ] HuggingFace 감정 분석 통합
-  - [ ] OpenAI GPT 피드백 생성
-  - [ ] AI 서비스 최적화
+- [x] **Phase 5: AI 통합**
+  - [x] HuggingFace 감정 분석 통합
+  - [x] OpenAI GPT 피드백 생성
+  - [x] AI 서비스 최적화
+
+### 📋 예정된 작업
 
 - [ ] **Phase 6: 테스트 & 최적화**
   - [ ] 단위 테스트 작성
