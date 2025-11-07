@@ -1,4 +1,7 @@
 import { useAuthStore } from '@/stores/auth.store';
+import { EmotionRecorder } from '@/components/emotions/EmotionRecorder';
+import { TodoList } from '@/components/todos/TodoList';
+import { PomodoroTimer } from '@/components/focus/PomodoroTimer';
 
 export function Dashboard() {
   const { user, logout } = useAuthStore();
@@ -30,20 +33,16 @@ export function Dashboard() {
             안녕하세요, {user?.name}님!
           </h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white p-6 rounded-lg shadow">
-              <h3 className="text-lg font-medium text-gray-900 mb-2">감정 기록</h3>
-              <p className="text-gray-600">오늘의 감정을 기록해보세요</p>
-            </div>
-            
-            <div className="bg-white p-6 rounded-lg shadow">
-              <h3 className="text-lg font-medium text-gray-900 mb-2">집중 세션</h3>
-              <p className="text-gray-600">포모도로 타이머를 시작하세요</p>
-            </div>
-            
-            <div className="bg-white p-6 rounded-lg shadow">
-              <h3 className="text-lg font-medium text-gray-900 mb-2">할 일</h3>
-              <p className="text-gray-600">오늘의 할 일을 관리하세요</p>
+          <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
+            {/* 감정 기록 */}
+            <EmotionRecorder />
+
+            {/* 포모도로 타이머 */}
+            <PomodoroTimer />
+
+            {/* 할 일 리스트 -전체 너비 */}
+            <div className='lg:col-span-2'>
+              <TodoList />
             </div>
           </div>
         </div>
