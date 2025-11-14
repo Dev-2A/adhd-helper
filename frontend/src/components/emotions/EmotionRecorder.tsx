@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { emotionService, type EmotionType } from '@/services/emotion.service';
 import { Heart, Frown, Brain, Smile, Zap, Angry, Meh } from 'lucide-react';
+import { Emoji } from '@/components/common/Emoji';
 
 const emotionTypes: { value: EmotionType; label: string; icon: React.ReactNode; color: string }[] = [
   { value: 'happy', label: '행복', icon: <Smile className="w-6 h-6" />, color: 'text-yellow-500' },
@@ -44,26 +45,34 @@ export function EmotionRecorder() {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <h2 className="text-2xl font-bold mb-4">감정 기록하기</h2>
-      
-      <form onSubmit={handleSubmit} className="space-y-6">
+    <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-lg p-8 border border-white/50 hover:shadow-xl transition-shadow">
+      <h2 className="text-3xl font-bold mb-6 bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent flex items-center gap-2">
+        <Emoji size="1.4em">💝</Emoji> 감정 기록하기
+      </h2>
+
+      <form onSubmit={handleSubmit} className="space-y-8">
         {/* 감정 레벨 선택 */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-semibold mb-4" style={{ color: '#5A5A5A' }}>
             감정 강도 (1-5)
           </label>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center justify-center space-x-3">
             {[1, 2, 3, 4, 5].map((level) => (
               <button
                 key={level}
                 type="button"
                 onClick={() => setEmotionLevel(level)}
-                className={`w-12 h-12 rounded-full font-semibold transition-all ${
+                className={`w-14 h-14 rounded-full font-bold transition-all transform hover:scale-105 ${
                   emotionLevel === level
-                    ? 'bg-blue-500 text-white scale-110'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                    ? 'scale-110 shadow-lg'
+                    : 'shadow-md hover:shadow-lg'
                 }`}
+                style={{
+                  background: emotionLevel === level
+                    ? 'linear-gradient(135deg, #C5B9E8 0%, #E0BBE4 100%)'
+                    : 'linear-gradient(135deg, #F0F0F0 0%, #E0E0E0 100%)',
+                  color: emotionLevel === level ? '#FFFFFF' : '#8A8A8A'
+                }}
               >
                 {level}
               </button>
@@ -73,24 +82,32 @@ export function EmotionRecorder() {
 
         {/* 감정 타입 선택 */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-semibold mb-4" style={{ color: '#5A5A5A' }}>
             감정 종류
           </label>
-          <div className="grid grid-cols-4 gap-3">
+          <div className="grid grid-cols-4 gap-4">
             {emotionTypes.map((emotion) => (
               <button
                 key={emotion.value}
                 type="button"
                 onClick={() => setEmotionType(emotion.value)}
-                className={`p-3 rounded-lg border-2 transition-all ${
+                className={`p-4 rounded-2xl transition-all transform hover:scale-105 ${
                   emotionType === emotion.value
-                    ? 'border-blue-500 bg-blue-50'
-                    : 'border-gray-200 hover:border-gray-300'
+                    ? 'shadow-lg scale-105'
+                    : 'shadow-md hover:shadow-lg'
                 }`}
+                style={{
+                  background: emotionType === emotion.value
+                    ? 'linear-gradient(135deg, rgba(197, 185, 232, 0.3) 0%, rgba(224, 187, 228, 0.3) 100%)'
+                    : 'rgba(255, 255, 255, 0.5)',
+                  border: emotionType === emotion.value ? '2px solid #C5B9E8' : '2px solid transparent'
+                }}
               >
                 <div className={`flex flex-col items-center ${emotion.color}`}>
                   {emotion.icon}
-                  <span className="text-xs mt-1 text-gray-700">{emotion.label}</span>
+                  <span className="text-xs mt-2 font-medium" style={{ color: '#5A5A5A' }}>
+                    {emotion.label}
+                  </span>
                 </div>
               </button>
             ))}
@@ -99,15 +116,20 @@ export function EmotionRecorder() {
 
         {/* 메모 입력 */}
         <div>
-          <label htmlFor="note" className="block text-sm font-medium text-gray-700 mb-2">
-            메모 (선택사항)
+          <label htmlFor="note" className="block text-sm font-semibold mb-3 flex items-center gap-2" style={{ color: '#5A5A5A' }}>
+            <Emoji>💭</Emoji> 메모 (선택사항)
           </label>
           <textarea
             id="note"
             value={note}
             onChange={(e) => setNote(e.target.value)}
-            rows={3}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            rows={4}
+            className="w-full px-4 py-3 rounded-2xl focus:outline-none focus:ring-2 focus:ring-purple-300 transition-all"
+            style={{
+              background: 'rgba(255, 255, 255, 0.7)',
+              color: '#5A5A5A',
+              border: '2px solid rgba(255, 209, 220, 0.4)',
+            }}
             placeholder="오늘의 기분이나 상황을 간단히 적어보세요..."
           />
         </div>
@@ -116,9 +138,14 @@ export function EmotionRecorder() {
         <button
           type="submit"
           disabled={createMutation.isPending}
-          className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="w-full py-4 rounded-2xl font-bold transition-all transform hover:scale-105 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
+          style={{
+            background: 'linear-gradient(135deg, #FFD1DC 0%, #FFB6B9 100%)',
+            color: '#5A5A5A',
+            boxShadow: '0 4px 15px rgba(255, 182, 185, 0.3)'
+          }}
         >
-          {createMutation.isPending ? '기록 중...' : '감정 기록하기'}
+          <Emoji>✨</Emoji> {createMutation.isPending ? '기록 중...' : '감정 기록하기'}
         </button>
       </form>
     </div>

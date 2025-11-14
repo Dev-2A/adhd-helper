@@ -33,7 +33,7 @@ class User(UserBase, BaseModel, table=True):
     emotion_records: List["EmotionRecord"] = Relationship(back_populates="user")
     focus_sessions: List["FocusSession"] = Relationship(back_populates="user")
     todo_items: List["TodoItem"] = Relationship(back_populates="user")
-    ai_feedbacks: List["AIFeedback"] = Relationship(back_populates="ai_feedbacks")
+    ai_feedbacks: List["AIFeedback"] = Relationship(back_populates="user")
 
     def get_settings(self) -> dict:
         """설정을 딕셔너리로 반환"""

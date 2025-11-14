@@ -2,11 +2,33 @@ import { useState, useEffect, useRef } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { focusService } from "@/services/focus.service";
 import { Play, Pause, Square } from "lucide-react";
+import { Emoji } from "@/components/common/Emoji";
 
 const TIMER_TYPES = [
-  { type: 'pomodoro' as const, label: '포모도로', duration: 25, color: 'bg-red-500' },
-  { type: 'break' as const, label: '짧은 휴식', duration: 5, color: 'bg-green-500' },
-  { type: 'deep_work' as const, label: 'Deep Work', duration: 45, color: 'bg-purple-500' },
+  {
+    type: 'pomodoro' as const,
+    label: '포모도로',
+    emoji: '🍅',
+    duration: 25,
+    gradient: 'linear-gradient(135deg, #FFB6B9 0%, #FFD1DC 100%)',
+    ringColor: '#FFB6B9'
+  },
+  {
+    type: 'break' as const,
+    label: '짧은 휴식',
+    emoji: '☕',
+    duration: 5,
+    gradient: 'linear-gradient(135deg, #B4E7CE 0%, #C1F0C8 100%)',
+    ringColor: '#B4E7CE'
+  },
+  {
+    type: 'deep_work' as const,
+    label: 'Deep Work',
+    emoji: '🎯',
+    duration: 45,
+    gradient: 'linear-gradient(135deg, #C5B9E8 0%, #E0BBE4 100%)',
+    ringColor: '#C5B9E8'
+  },
 ];
 
 export function PomodoroTimer() {
@@ -120,69 +142,85 @@ export function PomodoroTimer() {
   const progress = ((selectedType.duration * 60 - timeLeft) / (selectedType.duration * 60)) * 100;
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <h2 className="text-2xl font-bold mb-4">포모도로 타이머</h2>
+    <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-lg p-8 border border-white/50 hover:shadow-xl transition-shadow">
+      <h2 className="text-3xl font-bold mb-6 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent text-center flex items-center justify-center gap-2">
+        <Emoji size="1.4em">⏰</Emoji> 포모도로 타이머
+      </h2>
 
       {/* 타이머 타입 선택 */}
-      <div className="flex gap-2 mb-6">
+      <div className="flex gap-3 mb-8 justify-center">
         {TIMER_TYPES.map((type) => (
           <button
             key={type.type}
+            type="button"
             onClick={() => !isRunning && setSelectedType(type)}
             disabled={isRunning}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+            className={`px-5 py-3 rounded-2xl font-semibold transition-all transform flex items-center gap-2 ${
               selectedType.type === type.type
-                ? `${type.color} text-white`
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                ? 'scale-105 shadow-lg'
+                : 'shadow-md hover:shadow-lg hover:scale-105'
             } ${isRunning ? 'opacity-50 cursor-not-allowed' : ''}`}
+            style={{
+              background: selectedType.type === type.type ? type.gradient : 'rgba(255, 255, 255, 0.5)',
+              color: '#5A5A5A'
+            }}
           >
-            {type.label}
+            <Emoji>{type.emoji}</Emoji> {type.label}
           </button>
         ))}
       </div>
 
       {/* 타이머 디스플레이 */}
-      <div className="relative mb-6">
-        <div className="w-48 h-48 mx-auto relative">
+      <div className="relative mb-8">
+        <div className="w-64 h-64 mx-auto relative">
           {/* 진행률 원 */}
-          <svg className="transform -rotate-90 w-48 h-48">
+          <svg className="transform -rotate-90 w-64 h-64">
             <circle
-              cx="96"
-              cy="96"
-              r="88"
-              stroke="currentColor"
-              strokeWidth="8"
+              cx="128"
+              cy="128"
+              r="120"
+              stroke="#F0F0F0"
+              strokeWidth="12"
               fill="none"
-              className="text-gray-200"
             />
             <circle
-              cx="96"
-              cy="96"
-              r="88"
-              stroke="currentColor"
-              strokeWidth="8"
+              cx="128"
+              cy="128"
+              r="120"
+              stroke={selectedType.ringColor}
+              strokeWidth="12"
               fill="none"
-              strokeDasharray={553}
-              strokeDashoffset={553 - (553 * progress) / 100}
-              className={`text-${selectedType.color.replace('bg-', '')}`}
-              style={{ transition: 'stroke-dashoffset 1s' }}
+              strokeDasharray={754}
+              strokeDashoffset={754 - (754 * progress) / 100}
+              strokeLinecap="round"
+              style={{ transition: 'stroke-dashoffset 1s ease-in-out' }}
             />
           </svg>
 
           {/* 시간 표시 */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-4xl font-bold">{formatTime(timeLeft)}</span>
+          <div className="absolute inset-0 flex flex-col items-center justify-center">
+            <span className="text-5xl font-bold" style={{ color: '#5A5A5A' }}>
+              {formatTime(timeLeft)}
+            </span>
+            <span className="text-sm mt-2 flex items-center gap-1" style={{ color: '#8A8A8A' }}>
+              <Emoji>{selectedType.emoji}</Emoji> {selectedType.label}
+            </span>
           </div>
         </div>
       </div>
 
       {/* 컨트롤 버튼 */}
-      <div className="flex justify-center gap-3">
+      <div className="flex justify-center gap-4">
         {!isRunning && !sessionId && (
           <button
+            type="button"
             onClick={handleStart}
             disabled={startMutation.isPending}
-            className="px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 flex items-center gap-2"
+            className="px-8 py-4 rounded-2xl font-bold flex items-center gap-2 transition-all transform hover:scale-105 shadow-lg hover:shadow-xl"
+            style={{
+              background: 'linear-gradient(135deg, #B4E7CE 0%, #C1F0C8 100%)',
+              color: '#5A5A5A'
+            }}
           >
             <Play className="w-5 h-5" />
             시작
@@ -191,8 +229,13 @@ export function PomodoroTimer() {
 
         {isRunning && (
           <button
+            type="button"
             onClick={handlePause}
-            className="px-6 py-3 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 flex items-center gap-2"
+            className="px-8 py-4 rounded-2xl font-bold flex items-center gap-2 transition-all transform hover:scale-105 shadow-lg hover:shadow-xl"
+            style={{
+              background: 'linear-gradient(135deg, #FDFD96 0%, #FFD8B0 100%)',
+              color: '#5A5A5A'
+            }}
           >
             <Pause className="w-5 h-5" />
             일시정지
@@ -201,8 +244,13 @@ export function PomodoroTimer() {
 
         {!isRunning && sessionId && timeLeft > 0 && (
           <button
+            type="button"
             onClick={handleResume}
-            className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 flex items-center gap-2"
+            className="px-8 py-4 rounded-2xl font-bold flex items-center gap-2 transition-all transform hover:scale-105 shadow-lg hover:shadow-xl"
+            style={{
+              background: 'linear-gradient(135deg, #AEC6CF 0%, #C3E5FF 100%)',
+              color: '#5A5A5A'
+            }}
           >
             <Play className="w-5 h-5" />
             재개
@@ -211,8 +259,13 @@ export function PomodoroTimer() {
 
         {sessionId && (
           <button
+            type="button"
             onClick={handleStop}
-            className="px-6 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 flex items-center gap-2"
+            className="px-8 py-4 rounded-2xl font-bold flex items-center gap-2 transition-all transform hover:scale-105 shadow-lg hover:shadow-xl"
+            style={{
+              background: 'linear-gradient(135deg, #FFB6B9 0%, #FFD1DC 100%)',
+              color: '#5A5A5A'
+            }}
           >
             <Square className="w-5 h-5" />
             종료
@@ -222,11 +275,11 @@ export function PomodoroTimer() {
 
       {/* 현재 세션 정보 */}
       {currentSession && (
-        <div className="mt-4 p-3 bg-blue-50 rounded-lg">
-          <p className="text-sm text-blue-900">
-            현재 진행 중: {currentSession.session_type} 세션
+        <div className="mt-6 p-4 rounded-2xl" style={{ background: 'rgba(197, 185, 232, 0.2)' }}>
+          <p className="text-sm font-semibold flex items-center gap-2" style={{ color: '#5A5A5A' }}>
+            <Emoji>🎯</Emoji> 현재 진행 중: {currentSession.session_type} 세션
           </p>
-          <p className="text-xs text-blue-700">
+          <p className="text-xs mt-1" style={{ color: '#8A8A8A' }}>
             시작 시간: {new Date(currentSession.start_time).toLocaleTimeString()}
           </p>
         </div>

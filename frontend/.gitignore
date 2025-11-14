@@ -12,6 +12,17 @@ dist
 dist-ssr
 *.local
 
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Testing
+coverage/
+.vitest/
+*.test.tsx.snap
+*.test.ts.snap
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
